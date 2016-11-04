@@ -8,6 +8,8 @@ using namespace std;
 class Edge{
 
    public:
+   Edge();
+   ~Edge();
 
 
    private:
@@ -20,7 +22,8 @@ class Edge{
 class EndHost{
 
    public:
-   
+   EndHost();
+   ~EndHost();
 
    private:
    
