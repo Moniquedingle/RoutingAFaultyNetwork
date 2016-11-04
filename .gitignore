@@ -2,7 +2,6 @@
 *.slo
 *.lo
 *.o
-*.obj
 
 # Precompiled Headers
 *.gch
@@ -15,7 +14,6 @@
 
 # Fortran module files
 *.mod
-*.smod
 
 # Compiled Static libraries
 *.lai
@@ -27,3 +25,9 @@
 *.exe
 *.out
 *.app
+
+#OS files
+.DS_Store
+
+#Directories
+build/
