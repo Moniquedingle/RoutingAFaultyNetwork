@@ -9,25 +9,35 @@ class Edge{
 
    public:
    Edge();
+   Edge( const Edge &edgeObject );
    ~Edge();
+
+   int getLinkId();
+   void setLinkId( int linkValue );
 
 
    private:
- 
-   int id;
-   int cost;
-   bool state;
+
+   int linkId;
+   bool state; // whether the edge is faulty or not
 };
 
 class EndHost{
 
    public:
    EndHost();
+   // EndHost( const EndHost &endHostObject  );
    ~EndHost();
 
+   int getHostId();
+   void setHostId( int hostValue );
+   int getNumLinks();
+   void setLink( Edge linkValue );
+   int getLink( int index ); // returns Edge ID
+
    private:
-   
-   int id;
+
+   int hostId;
    int numLinks;
    vector<Edge> link;
 };
@@ -35,7 +45,8 @@ class EndHost{
 
 struct Packet{
 
+   int hops;
    int dest;
    bool arrived;
-   vector<int> path;
+   vector<int> path; // path characterized by Edge int id
 };
