@@ -108,23 +108,23 @@ void output( vector< vector<Edge> > &linkMatrix, int numEndHosts )
      bool state;
 
     // output for row indicators of matrix
-    cout << "  ";
+    cout << endl << "N = Not Broken Link, B = BROKEN Link" << endl << endl << "   |";
     for( counter = 0; counter < numEndHosts; counter++ )
        {
-        cout << "       " << char(counter + 'A') << "       |";
+        cout << "  " << char(counter + 'A') << "  |";
        }
 
-     cout << endl << "---";
+     cout << endl << "----";
      for( counter = 0; counter < numEndHosts; counter++ )
         {
-         cout << "---------------";
+         cout << "------";
         }
      cout << endl;
 
      // output values (ID AND STATE)
      for( rowIndex = 0; rowIndex < numEndHosts; rowIndex++ )
         {
-          cout << char(rowIndex + 'A') << " |  ";
+          cout << " " << char(rowIndex + 'A') << " | ";
 
           for( columnIndex = 0; columnIndex < numEndHosts; columnIndex++ )
              {
@@ -133,19 +133,19 @@ void output( vector< vector<Edge> > &linkMatrix, int numEndHosts )
 
                if( state == false )
                   {
-                    cout << " Not Broken | ";
+                    cout << " N | ";
                   }
                else
                   {
-                    cout << "   Broken   | ";
+                    cout << " B | ";
                   }
              }
 
           // OUTPUT DESIGN - LINE UNDER EACH ROW
-          cout << endl << "---";
+          cout << endl << "----";
           for( counter = 0; counter < numEndHosts; counter++ )
              {
-              cout << "---------------";
+              cout << "------";
              }
           cout << endl;
         }
