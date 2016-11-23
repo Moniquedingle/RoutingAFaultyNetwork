@@ -14,6 +14,7 @@ class Edge{
 
    int getLinkId();
    void setLinkId( int linkValue );
+   bool getState();
 
 
    private:
@@ -45,7 +46,7 @@ class EndHost{
 
 struct Packet{
 
-   int hops;
+   int hops; // ++ when value added to path
    int dest;
    bool arrived;
    vector<int> path; // path characterized by Edge int id

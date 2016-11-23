@@ -20,7 +20,7 @@ Edge::Edge( const Edge &edgeObject )
 Edge::~Edge()
    {
     linkId = 0;
-    state = false;
+    state = false; // true = broken link
    }
 
 int Edge:: getLinkId()
@@ -31,6 +31,11 @@ int Edge:: getLinkId()
 void Edge:: setLinkId( int linkValue )
    {
     linkId = linkValue;
+   }
+
+bool Edge:: getState()
+   {
+     return state;
    }
 
 EndHost::EndHost()
