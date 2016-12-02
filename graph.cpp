@@ -33,6 +33,11 @@ void Edge:: setLinkId( int linkValue )
     linkId = linkValue;
    }
 
+void Edge:: setState( bool newState )
+   {
+    state = newState;
+   }
+
 bool Edge:: getState()
    {
      return state;

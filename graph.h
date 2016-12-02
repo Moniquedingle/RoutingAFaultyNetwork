@@ -14,6 +14,7 @@ class Edge{
 
    int getLinkId();
    void setLinkId( int linkValue );
+   void setState( bool newState );
    bool getState();
 
 

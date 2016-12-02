@@ -4,7 +4,7 @@
 #include <vector>
 
 // FUNCTION PROTOTYPES ////////////////////////////////////
-void generateGraph( vector< vector<Edge> > &linkMatrix, int numEndHosts );
+void generateGraph( vector< vector<Edge> > &linkMatrix, int numEndHosts, int linkAmount);
 
 void breakGraph( vector< vector<Edge> > &linkMatrix, int numEndHosts );
 
@@ -23,6 +23,7 @@ int main()
      vector<Packet> packets;
      vector< vector<Edge> > linkMatrix;
      int numEndHosts = -1;
+     int linkAmount = 0;
      int rowIndex, columnIndex, resizeIndex;
 
      // ask user for data
@@ -33,6 +34,13 @@ int main()
            cout << "Please input the number of desired routers (max 20): ";
            cin >> numEndHosts;
          }
+
+      while( linkAmount < 2 || linkAmount > 5)
+         {
+           cout << "Please input the max amount of links a route can have (2 <= links <= 5): ";
+           cin >> linkAmount;
+         }
+
 
       // size link matrix to accomodate numEndHosts
       linkMatrix.resize( numEndHosts );
@@ -51,15 +59,13 @@ int main()
               }
          }
 
-  // do we want this? see phoebe and gicelle for explanation
-  //    cout << "Please input the maximum number of links per host (max 3): ";
-  //    cin >> numLinksPerHost;
-
     // randomly generate graph based on user info with some broken links
-    generateGraph( linkMatrix, numEndHosts );
+    generateGraph( linkMatrix, numEndHosts, linkAmount );
+
+    // randomly breaks links
+    breakGraph( linkMatrix, numEndHosts );
 
     output( linkMatrix, numEndHosts );
-    // ask sengupta for life
 
     // packet always starts route at end host ID 1 and ends at the last end host ID
 
@@ -67,9 +73,10 @@ int main()
    }
 
 // FUNCTION IMPLEMENTATIONS ////////////////////////////////////
-void generateGraph( vector< vector<Edge> > &linkMatrix, int numEndHosts )
+void generateGraph( vector< vector<Edge> > &linkMatrix, int numEndHosts, int linkAmount  )
    {
      int rowIndex, columnIndex, value;
+     int counter = 0;
 
      for( rowIndex = 0; rowIndex < numEndHosts; rowIndex++ )
         {
@@ -77,7 +84,7 @@ void generateGraph( vector< vector<Edge> > &linkMatrix, int numEndHosts )
              {
                if( rowIndex == columnIndex )
                   {
-                    value = 0;
+                    value = 0; // if host is itself = 0
                   }
                else
                   {
@@ -95,11 +102,36 @@ void generateGraph( vector< vector<Edge> > &linkMatrix, int numEndHosts )
                   }
              }
         }
+        counter ++;
    }
 
 void breakGraph( vector< vector<Edge> > &linkMatrix, int numEndHosts )
    {
+     float percentBroken = -1;
+     int brokenLinks = 0;
+     int brokenCounter = 0, breakRow = 0, breakCol = 0;
+
      // iterates through matrix and sets random states to true (broken/faulty)
+     while( percentBroken < 0 || percentBroken > 100 )
+        {
+          cout << "Please input desired percentage of broken links (min 0, max 100): ";
+          cin >> percentBroken;
+        }
+
+     percentBroken /= 100;
+     brokenLinks = ((((numEndHosts *numEndHosts) - numEndHosts)/2)* percentBroken);
+     while( brokenCounter < brokenLinks )
+        {
+          while( breakRow == breakCol || linkMatrix[breakRow][breakCol].getState() == true  )
+             {
+               breakRow = rand() % numEndHosts;
+               breakCol = rand() % numEndHosts;
+             }
+
+          linkMatrix[breakRow][breakCol].setState( true ); // true = broken
+          linkMatrix[breakCol][breakRow].setState( true );
+          brokenCounter++;
+        }
    }
 
 void output( vector< vector<Edge> > &linkMatrix, int numEndHosts )
