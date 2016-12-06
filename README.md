@@ -2,6 +2,11 @@
 This is a simulation on routing through a faulty network.
 
 ## Routing Through A Faulty Network
+The objective of this project includes the following:
+- Create a graph based on user input                   
+- Randomly generate connections between nodes          
+- Randomly break links between nodes throughout graph based on user input                           
+- Develop a routing algorithm to send a packet through the faulty network
 
 ### Dependencies
 All code was tested using Ubuntu 14.04. The following applications must be
