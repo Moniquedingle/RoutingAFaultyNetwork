@@ -7,7 +7,7 @@ using namespace std;
 
 Edge::Edge()
    {
-     linkId = 0;
+     linkId = -1;
      state = false;
      visited = false;
    }
@@ -22,7 +22,7 @@ Edge::Edge( const Edge &edgeObject )
 
 Edge::~Edge()
    {
-     linkId = 0;
+     linkId = -1;
      state = false; // true = broken link
      visited = false;
    }
@@ -55,45 +55,6 @@ void Edge:: setVisited()
 bool Edge:: getVisited()
    {
      return visited;
-   }
-
-EndHost::EndHost()
-   {
-     hostId = 0;
-     numLinks = 0;
-   }
-
-EndHost::~EndHost()
-   {
-     hostId = '0';
-     numLinks = 0;
-     link.clear();
-   }
-
-int EndHost:: getHostId()
-   {
-     return hostId;
-   }
-
-void EndHost:: setHostId( int hostValue )
-   {
-     hostId = hostValue;
-   }
-
-int EndHost:: getNumLinks()
-   {
-     return numLinks;
-   }
-
-void EndHost:: setLink( Edge linkValue )
-   {
-     link.push_back( linkValue );
-     numLinks++;
-   }
-
-int EndHost:: getLink( int index )
-   {
-     return link.at( index ).getLinkId();
    }
 
 Packet::Packet()

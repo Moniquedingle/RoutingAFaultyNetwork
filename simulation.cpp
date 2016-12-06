@@ -1,15 +1,19 @@
-/*******************************************************************/
-/* Project title: Learning to Route through a Faulty Network       */
-/* Group members: Monique Dingle, Gicelle Calderon, Phoebe Argon   */
-/* Objectives: Create a graph based on user input                  */
+/********************************************************************/
+/* Project title: Learning to Route through a Faulty Network        */
+/* Group members: Monique Dingle, Gicelle Calderon, Phoebe Argon    */
+/* Objectives: Create a graph based on user input                   */
 /*             Randomly generate connections between nodes          */
 /*             Randomly break links between nodes throughout graph  */
-/*                    based on user input                          */
+/*                    based on user input                           */
 /*             Develop a routing algorithm to send a packet         */
-/*                    through the faulty network                   */
-/* Version: 1.0                                                    */
-/* Date: 12-7-16                                                   */
-/*******************************************************************/
+/*                    through the faulty network                    */
+/* Version: 2.0                                                     */
+/* Changes: The simulation function has been change to have a more  */
+/*          optimal solution. Instead of starting at the first      */
+/*          source, we start at the destination and make our way to */
+/*          the source.                                             */
+/* Date: 12-7-16                                                    */
+/********************************************************************/
 
 
 // HEADER FILES ///////////////////////////////////////////
@@ -17,6 +21,9 @@
 #include <iostream>
 #include <cstdlib>
 #include <vector>
+#include <algorithm> // used for reversing the vector for output
+
+using namespace std;
 
 // FUNCTION PROTOTYPES ////////////////////////////////////
 
@@ -62,7 +69,7 @@ Notes: Can only output up to 20 end hosts due to screen size
 Algorithm: Iterates through graph and outputs row by row
 Return: None
 */
-void output( vector< vector<Edge> > &linkMatrix, int numEndHosts );
+void outputGraph( vector< vector<Edge> > &linkMatrix, int numEndHosts );
 
 /*
 Description: Simulates a packet being sent through the faulty graph
@@ -79,12 +86,23 @@ Return: true if the solution is found, false if there exists no solution
 */
 bool simulate( Packet &packetRunner, vector< vector<Edge> > &linkMatrix, int numEndHosts );
 
+/*
+Description: Outputs the results of the simulation
+Parameters: The packet being sent through the graph and whether or not a solution was found
+Precondition: The simulation has taken place
+Postcondition: The results will be displayed on the screen
+Notes: None
+Algorithm: If statement checks for a found solution and outputs the path
+Return: None
+*/
+void outputSolution( Packet &packetRunner, bool solutionFound );
+
 
 // MAIN PROGRAM ////////////////////////////////////////////
+
 int main()
    {
      int numEndHosts = -1, linkAmount = -1; // -1 flag for invalid info
-     unsigned int pathCounter;
      bool solutionFound = false;
      Packet packetRunner;
      vector< vector<Edge> > linkMatrix;
@@ -115,37 +133,13 @@ int main()
     breakGraph( linkMatrix, numEndHosts );
 
     // output the graph in its current state
-    output( linkMatrix, numEndHosts );
+    outputGraph( linkMatrix, numEndHosts );
 
     // simulates the packet moving through the graph using developed routing algorithm
     solutionFound = simulate( packetRunner, linkMatrix, numEndHosts );
 
     // if the packet successfully reached the end
-    if( solutionFound )
-       {
-         // output the destination, the number of hops the packet took, and the path followed
-         cout << "Destination: " << char(packetRunner.dest + 'A') << endl;
-         cout << "The packet hopped " << packetRunner.hops << " times" << endl;
-         cout << "The packet followed the path: ";
-         for( pathCounter = 0; pathCounter < packetRunner.path.size(); pathCounter++)
-            {
-             cout << char(packetRunner.path[pathCounter] + 'A') << " ";
-            }
-         cout << endl;
-       }
-    // if the packet was unable to reach the end
-    else
-       {
-         // output the attempted destination, that no solution was found, and the attempted path
-         cout << "Attempted destination: " << char(packetRunner.dest + 'A') << endl;
-         cout << "No possible solution found" << endl;
-         cout << "The attempted path was: ";
-         for( pathCounter = 0; pathCounter < packetRunner.path.size(); pathCounter++)
-            {
-             cout << char(packetRunner.path[pathCounter] + 'A') << " ";
-            }
-         cout << endl;
-       }
+    outputSolution( packetRunner, solutionFound );
 
     return 0;
    }
@@ -154,7 +148,7 @@ int main()
 
 void sizeMatrix( vector< vector<Edge> > &linkMatrix, int numEndHosts )
    {
-     int rowIndex, columnIndex, resizeIndex;
+     int resizeIndex;
 
      // resize the vector row
      linkMatrix.resize( numEndHosts );
@@ -163,15 +157,6 @@ void sizeMatrix( vector< vector<Edge> > &linkMatrix, int numEndHosts )
      for( resizeIndex = 0; resizeIndex < numEndHosts; resizeIndex++ )
         {
           linkMatrix[resizeIndex].resize( numEndHosts );
-        }
-
-     // initializes all indeces to -1 to show that they haven't been set
-     for( rowIndex = 0; rowIndex < numEndHosts; rowIndex++ )
-        {
-          for( columnIndex = 0; columnIndex < numEndHosts; columnIndex++ )
-             {
-               linkMatrix[rowIndex][columnIndex].setLinkId( -1 );
-             }
         }
    }
 
@@ -247,7 +232,7 @@ void breakGraph( vector< vector<Edge> > &linkMatrix, int numEndHosts )
         }
    }
 
-void output( vector< vector<Edge> > &linkMatrix, int numEndHosts )
+void outputGraph( vector< vector<Edge> > &linkMatrix, int numEndHosts )
    {
      int rowIndex, columnIndex, counter;
      bool state;
@@ -298,12 +283,12 @@ void output( vector< vector<Edge> > &linkMatrix, int numEndHosts )
 
 bool simulate( Packet &packetRunner, vector< vector<Edge> > &linkMatrix, int numEndHosts )
    {
-     int rowIndex = 0, columnIndex = 0;
+     int rowIndex = numEndHosts - 1, columnIndex = 0;
      bool continueSearch = true;
      int searchCounter = 0;
 
-     // set packet runner destination to last possible end host
-     packetRunner.dest = numEndHosts - 1;
+     // set packet runner destination to first index in matrix
+     packetRunner.dest = 0;
 
      // keep searching until the packet has arrived at dest or all end hosts have been searched
      while( continueSearch && searchCounter < numEndHosts )
@@ -361,4 +346,40 @@ bool simulate( Packet &packetRunner, vector< vector<Edge> > &linkMatrix, int num
         }
 
      return false; // did not find a solution
+   }
+
+void outputSolution( Packet &packetRunner, bool solutionFound )
+   {
+     unsigned int pathCounter;
+
+     reverse( packetRunner.path.begin(), packetRunner.path.end() );
+
+     if( solutionFound )
+        {
+          // output the destination, the number of hops the packet took, and the path followed
+          cout << "Destination: " << char(packetRunner.dest + 'A') << endl;
+          cout << "The packet hopped " << packetRunner.hops << " times" << endl;
+          cout << "The packet followed the path: ";
+
+          for( pathCounter = 0; pathCounter < packetRunner.path.size(); pathCounter++)
+             {
+              cout << char(packetRunner.path[pathCounter] + 'A') << " ";
+             }
+          cout << endl;
+        }
+     // if the packet was unable to reach the end
+     else
+        {
+          // output the attempted destination, that no solution was found, and the attempted path
+          cout << "Attempted destination: " << char(packetRunner.dest + 'A') << endl;
+          cout << "No possible solution found" << endl;
+          cout << "The attempted path was: ";
+
+          for( pathCounter = 0; pathCounter < packetRunner.path.size(); pathCounter++)
+             {
+              cout << char(packetRunner.path[pathCounter] + 'A') << " ";
+             }
+          cout << endl;
+        }
+
    }
